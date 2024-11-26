@@ -46,6 +46,7 @@ Imports:
     assertthat,
     digest,
     R.utils,
+    kableExtra,
     base64enc
 Suggests: 
     testthat (>= 2.0.0),
@@ -62,7 +63,6 @@ Suggests:
     pheatmap,
     viridis,
     poolr,
-    kableExtra,
     listviewer,
     shiny
 Config/testthat/edition: 2
