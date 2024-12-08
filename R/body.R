@@ -176,7 +176,8 @@ setGemmaPath <- function(path){
     } else if (response$status_code == 503) {
         stop(call,'\n',response$status_code, ": Service Unavailable. Gemma might be under maintenance.")
     } else {
-        stop(call, '\n', "HTTP code ", response$status_code)
+        message = response$content %>% rawToChar() %>% strsplit('\n') %>% {.[[1]]} %>% {.[grepl('Message',.)]} %>% stringr::str_extract('(?<=Message: ).*')
+        stop(call, '\n', "HTTP code ", response$status_code,": ",message)
     }
 }
 
