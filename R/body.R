@@ -176,7 +176,11 @@ setGemmaPath <- function(path){
     } else if (response$status_code == 503) {
         stop(call,'\n',response$status_code, ": Service Unavailable. Gemma might be under maintenance.")
     } else {
-        message = response$content %>% rawToChar() %>% strsplit('\n') %>% {.[[1]]} %>% {.[grepl('Message',.)]} %>% stringr::str_extract('(?<=Message: ).*')
+        if(isFile){
+            message <- response$content %>% rawToChar() %>% strsplit('\n') %>% {.[[1]]} %>% {.[grepl('Message',.)]} %>% stringr::str_extract('(?<=Message: ).*')
+        } else{
+            message <- response$content %>% rawToChar() %>% jsonlite::fromJSON() %>% {.$error$message}
+        }
         stop(call, '\n', "HTTP code ", response$status_code,": ",message)
     }
 }
