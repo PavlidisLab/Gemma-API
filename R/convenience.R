@@ -995,6 +995,8 @@ update_result<- function(query){
 #' @param overwrite Whether or not to overwrite if a file exists at the specified
 #' filename.
 #' 
+#' @keywords gene
+#' 
 #' @examples
 #' # get all differential expression results for ENO2
 #' # from datasets marked with the ontology term for brain
@@ -1034,6 +1036,80 @@ get_gene_differential_expression_values <- function(gene,
                                                  memoised = memoised,
                                                  file = file,
                                                  overwrite = overwrite)
+    }
+    
+    
+}
+
+
+
+#' Retrieve the expression data matrix of a set of datasets and genes
+#'
+#'
+#'
+#' @param datasets A vector of dataset IDs or short names
+#' @param genes A vector of NCBI IDs, Ensembl IDs or gene symbols.
+#' @param keepNonSpecific logical. \code{FALSE} by default. If \code{TRUE}, results
+#' from probesets that are not specific to the gene will also be returned.
+#' @param consolidate An option for gene expression level consolidation. If empty,
+#' will return every probe for the genes. "pickmax" to
+#' pick the probe with the highest expression, "pickvar" to pick the prove with
+#' the highest variance and "average" for returning the average expression
+#' @param raw \code{TRUE} to receive results as-is from Gemma, or \code{FALSE} to enable
+#' parsing. Raw results usually contain additional fields and flags that are
+#' omitted in the parsed results.
+#' @param memoised Whether or not to save to cache for future calls with the
+#' same inputs and use the result saved in cache if a result is already saved.
+#' Doing \code{options(gemma.memoised = TRUE)} will ensure that the cache is always
+#' used. Use \code{\link{forget_gemma_memoised}} to clear the cache.
+#' @param file The name of a file to save the results to, or \code{NULL} to not write
+#' results to a file. If \code{raw == TRUE}, the output will be the raw endpoint from the
+#' API, likely a JSON or a gzip file. Otherwise, it will be a RDS file.
+#' @param overwrite Whether or not to overwrite if a file exists at the specified
+#' filename.
+#'
+#' @return A list of data frames
+#' @keywords dataset
+#'
+#' @examples
+#' get_dataset_expression_for_genes("GSE2018", genes = c(10225, 2841))
+#' @export
+get_dataset_expression_for_genes <- function(
+    datasets, genes,
+    keepNonSpecific = FALSE, 
+    consolidate = NA_character_,
+    raw = getOption("gemma.raw", FALSE),
+    memoised = getOption(
+        "gemma.memoised",
+        FALSE
+    ), 
+    file = getOption("gemma.file", NA_character_),
+    overwrite = getOption("gemma.overwrite", FALSE)
+){
+    ds <- get_datasets_by_ids(datasets = datasets)
+    if(length(unique(ds$taxon.name)) == 1){
+        .get_dataset_expression_for_genes_in_taxon(
+            datasets = datasets,
+            genes = genes,
+            keepNonSpecific = keepNonSpecific,
+            consolidate = consolidate,
+            raw = raw,
+            memoised = memoised,
+            file = file,
+            overwrite = overwrite,
+            taxon = ds$taxon.name[[1]]
+        )
+    } else{
+        .get_dataset_expression_for_genes(
+            datasets = datasets,
+            genes = genes,
+            keepNonSpecific = keepNonSpecific,
+            consolidate = consolidate,
+            raw = raw,
+            memoised = memoised,
+            file = file,
+            overwrite = overwrite
+        )
     }
     
     

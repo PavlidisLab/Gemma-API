@@ -603,13 +603,11 @@ memget_dataset_differential_expression_analyses <- function(dataset, raw = getOp
 #' filename.
 #'
 #' @return A list of data frames
-#' @export
-#'
-#' @keywords dataset
+#' @keywords internal
 #'
 #' @examples
 #' get_dataset_expression_for_genes("GSE2018", genes = c(10225, 2841))
-get_dataset_expression_for_genes <- function(
+.get_dataset_expression_for_genes <- function(
         datasets, genes, keepNonSpecific = FALSE, consolidate = NA_character_,
         raw = getOption("gemma.raw", FALSE), memoised = getOption(
             "gemma.memoised",
@@ -618,11 +616,11 @@ get_dataset_expression_for_genes <- function(
         overwrite = getOption("gemma.overwrite", FALSE)) {
     compressibles <- NULL
     open_api_name <- "get_datasets_expression_levels_for_genes"
-    internal <- FALSE
+    internal <- TRUE
     keyword <- "dataset"
     header <- ""
     isFile <- FALSE
-    fname <- "get_dataset_expression_for_genes"
+    fname <- ".get_dataset_expression_for_genes"
     preprocessor <- process_dataset_gene_expression
     validators <- list(datasets = function(name, ...) {
         ID <- unlist(list(...))
@@ -669,13 +667,13 @@ get_dataset_expression_for_genes <- function(
         }
         if ("character" %in% class(gemmaCache()) && gemmaCache() ==
             "cache_in_memory") {
-            return(mem_in_memory_cache("get_dataset_expression_for_genes",
+            return(mem_in_memory_cache(".get_dataset_expression_for_genes",
                 datasets = datasets, genes = genes, keepNonSpecific = keepNonSpecific,
                 consolidate = consolidate, raw = raw, memoised = FALSE,
                 file = file, overwrite = overwrite
             ))
         } else {
-            out <- memget_dataset_expression_for_genes(
+            out <- mem.get_dataset_expression_for_genes(
                 datasets = datasets,
                 genes = genes, keepNonSpecific = keepNonSpecific,
                 consolidate = consolidate, raw = raw, memoised = FALSE,
@@ -692,23 +690,177 @@ get_dataset_expression_for_genes <- function(
     )
 }
 
-#' Memoise get_dataset_expression_for_genes
+#' Memoise .get_dataset_expression_for_genes
 #'
 #' @noRd
-memget_dataset_expression_for_genes <- function(
+mem.get_dataset_expression_for_genes <- function(
         datasets, genes, keepNonSpecific = FALSE, consolidate = NA_character_,
         raw = getOption("gemma.raw", FALSE), memoised = getOption(
             "gemma.memoised",
             FALSE
         ), file = getOption("gemma.file", NA_character_),
         overwrite = getOption("gemma.overwrite", FALSE)) {
-    mem_call <- memoise::memoise(get_dataset_expression_for_genes,
+    mem_call <- memoise::memoise(.get_dataset_expression_for_genes,
         cache = gemmaCache()
     )
     mem_call(
         datasets = datasets, genes = genes, keepNonSpecific = keepNonSpecific,
         consolidate = consolidate, raw = raw, memoised = FALSE,
         file = file, overwrite = overwrite
+    )
+}
+
+#' Retrieve the expression data matrix of a set of datasets and genes
+#'
+#'
+#'
+#' @param datasets A comma-delimited list of dataset IDs or short names. The value may be compressed with gzip and encoded with base64.
+#' @param genes A comma-delimited list of NCBI IDs, Ensembl IDs or gene symbols. The value may be compressed with gzip and encoded with base64.
+#' @param keepNonSpecific boolean
+#' @param consolidate An option for gene expression level consolidation.
+#' @param taxon A numerical taxon identifier or an ncbi taxon identifier or a taxon identifier that matches either its scientific or common name
+#' @param raw \code{TRUE} to receive results as-is from Gemma, or \code{FALSE} to enable
+#' parsing. Raw results usually contain additional fields and flags that are
+#' omitted in the parsed results.
+#' @param memoised Whether or not to save to cache for future calls with the
+#' same inputs and use the result saved in cache if a result is already saved.
+#' Doing \code{options(gemma.memoised = TRUE)} will ensure that the cache is always
+#' used. Use \code{\link{forget_gemma_memoised}} to clear the cache.
+#' @param file The name of a file to save the results to, or \code{NULL} to not write
+#' results to a file. If \code{raw == TRUE}, the output will be the raw endpoint from the
+#' API, likely a JSON or a gzip file. Otherwise, it will be a RDS file.
+#' @param overwrite Whether or not to overwrite if a file exists at the specified
+#' filename.
+#'
+#' @return Varies
+#' @keywords internal
+#'
+#' @examples
+.get_dataset_expression_for_genes_in_taxon <- function(
+        datasets, genes, keepNonSpecific = FALSE, consolidate = NA_character_,
+        taxon, raw = getOption("gemma.raw", FALSE), memoised = getOption(
+            "gemma.memoised",
+            FALSE
+        ), file = getOption("gemma.file", NA_character_),
+        overwrite = getOption("gemma.overwrite", FALSE)) {
+    compressibles <- NULL
+    open_api_name <- "get_datasets_expression_levels_for_genes_in_taxon"
+    internal <- TRUE
+    keyword <- "dataset"
+    header <- ""
+    isFile <- FALSE
+    fname <- ".get_dataset_expression_for_genes_in_taxon"
+    preprocessor <- process_dataset_gene_expression
+    validators <- list(datasets = function(name, ...) {
+        ID <- unlist(list(...))
+        isID <- grepl("^\\d+$", ID)
+        if (any(is.na(ID)) || (any(isID) && !all(isID)) || any(ID ==
+            "")) {
+            stop(glue::glue("Please specify valid identifiers for {name} and do not combine different types of identifiers."),
+                call. = FALSE
+            )
+        }
+        paste0(ID, collapse = ",")
+    }, genes = function(name, ...) {
+        ID <- unlist(list(...))
+        isID <- grepl("^\\d+$", ID)
+        if (any(is.na(ID)) || (any(isID) && !all(isID)) || any(ID ==
+            "")) {
+            stop(glue::glue("Please specify valid identifiers for {name} and do not combine different types of identifiers."),
+                call. = FALSE
+            )
+        }
+        paste0(ID, collapse = ",")
+    }, keepNonSpecific = function(name, ...) {
+        args <- unlist(list(...))
+        if (length(args) != 1 || !is.logical(args)) {
+            stop(glue::glue("Please only specify boolean values for {name}."),
+                call. = FALSE
+            )
+        }
+        tolower(as.character(args))
+    }, consolidate = function(name, ...) {
+        consolidate <- unlist(list(...))
+        if (length(consolidate) > 1 | (!consolidate %in% c(
+            NA_character_,
+            "pickmax", "pickvar", "average"
+        ))) {
+            stop("consolidate must be NA, \"pickmax\", \"pickmax\" or \"average\"")
+        }
+        return(consolidate)
+    }, taxon = function(name, ...) {
+        taxa <- as.character(unlist(list(...)))
+        if (length(taxa) > 1) {
+            stop("Please specify only one taxon.", call. = FALSE)
+        }
+        LOOKUP_TABLE <- data.table(
+            id = c(
+                1, 2, 3, 11, 12, 13,
+                14
+            ), name = c(
+                "human", "mouse", "rat", "yeast", "zebrafish",
+                "fly", "worm"
+            ), scientific = c(
+                "Homo sapiens", "Mus musculus",
+                "Rattus norvegicus", "Saccharomyces cerevisiae",
+                "Danio rerio", "Drosophila melanogaster", "Caenorhabditis elegans"
+            ),
+            ncbi = c(9606, 10090, 10116, 4932, 7955, 7227, 6239)
+        )
+        if (!all(taxa %in% c("", unlist(LOOKUP_TABLE)))) {
+            stop("You must specify a valid taxon. The available taxa are:\n            human, mouse, rat, yeast, zebrafish, fly and worm.",
+                call. = FALSE
+            )
+        }
+        paste0(taxa, collapse = ",")
+    })
+    endpoint <- "datasets/{encode(datasets)}/expressions/taxa/{encode(taxon)}/genes/{encode(genes)}?keepNonSpecific={encode(keepNonSpecific)}&consolidate={encode(consolidate)}"
+    if (memoised) {
+        if (!is.na(file)) {
+            warning("Saving to files is not supported with memoisation.")
+        }
+        if ("character" %in% class(gemmaCache()) && gemmaCache() ==
+            "cache_in_memory") {
+            return(mem_in_memory_cache(".get_dataset_expression_for_genes_in_taxon",
+                datasets = datasets, genes = genes, keepNonSpecific = keepNonSpecific,
+                consolidate = consolidate, taxon = taxon, raw = raw,
+                memoised = FALSE, file = file, overwrite = overwrite
+            ))
+        } else {
+            out <- mem.get_dataset_expression_for_genes_in_taxon(
+                datasets = datasets,
+                genes = genes, keepNonSpecific = keepNonSpecific,
+                consolidate = consolidate, taxon = taxon, raw = raw,
+                memoised = FALSE, file = file, overwrite = overwrite
+            )
+            return(out)
+        }
+    }
+    .body(
+        fname = fname, validators = validators, endpoint = endpoint,
+        envWhere = environment(), isFile = isFile, header = header,
+        raw = raw, overwrite = overwrite, file = file, attributes = TRUE,
+        open_api_name = open_api_name, .call = match.call()
+    )
+}
+
+#' Memoise .get_dataset_expression_for_genes_in_taxon
+#'
+#' @noRd
+mem.get_dataset_expression_for_genes_in_taxon <- function(
+        datasets, genes, keepNonSpecific = FALSE, consolidate = NA_character_,
+        taxon, raw = getOption("gemma.raw", FALSE), memoised = getOption(
+            "gemma.memoised",
+            FALSE
+        ), file = getOption("gemma.file", NA_character_),
+        overwrite = getOption("gemma.overwrite", FALSE)) {
+    mem_call <- memoise::memoise(.get_dataset_expression_for_genes_in_taxon,
+        cache = gemmaCache()
+    )
+    mem_call(
+        datasets = datasets, genes = genes, keepNonSpecific = keepNonSpecific,
+        consolidate = consolidate, taxon = taxon, raw = raw,
+        memoised = FALSE, file = file, overwrite = overwrite
     )
 }
 

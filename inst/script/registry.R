@@ -294,7 +294,7 @@ registerEndpoint('datasets/{dataset}/analyses/differential',
 
 # /datasets/{datasets}/expressions/genes/{genes}, get_dataset_expression_for_genes ------
 
-#' get_dataset_expression_for_genes
+#' .get_dataset_expression_for_genes
 #' 
 #' @param datasets A vector of dataset IDs or short names
 #' @param genes A vector of NCBI IDs, Ensembl IDs or gene symbols.
@@ -311,8 +311,9 @@ NULL
 
 
 registerEndpoint('datasets/{datasets}/expressions/genes/{genes}?keepNonSpecific={keepNonSpecific}&consolidate={consolidate}',
-                 'get_dataset_expression_for_genes', open_api_name = 'get_datasets_expression_levels_for_genes',
+                 '.get_dataset_expression_for_genes', open_api_name = 'get_datasets_expression_levels_for_genes',
                  keyword = 'dataset',
+                 internal = TRUE,
                  defaults = list(
                      datasets = bquote(),
                      genes = bquote(),
@@ -329,8 +330,30 @@ registerEndpoint('datasets/{datasets}/expressions/genes/{genes}?keepNonSpecific=
 
 
 
-# /datasets/{datasets}/expressions/taxa/{taxa}/genes/{genes} ---------
+# /datasets/{datasets}/expressions/taxa/{taxon}/genes/{genes} ---------
 # currently unimplemented
+registerEndpoint('datasets/{datasets}/expressions/taxa/{taxon}/genes/{genes}?keepNonSpecific={keepNonSpecific}&consolidate={consolidate}',
+                 '.get_dataset_expression_for_genes_in_taxon', open_api_name = 'get_datasets_expression_levels_for_genes_in_taxon',
+                 keyword = 'dataset',
+                 internal = TRUE,
+                 defaults = list(
+                     datasets = bquote(),
+                     genes = bquote(),
+                     keepNonSpecific = FALSE,
+                     consolidate = NA_character_,
+                     taxon = bquote()
+                 ),
+                 validators = list(
+                     datasets = validateID,
+                     genes = validateID,
+                     keepNonSpecific = validateBoolean,
+                     consolidate = validateConsolidate,
+                     taxon = validateTaxon
+                 ),
+                 preprocessor = quote(process_dataset_gene_expression))
+
+
+
 
 
 # datasets/{datasets}/expressions/pca -----
