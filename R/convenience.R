@@ -961,3 +961,80 @@ update_result<- function(query){
         return(do.call(get_all_pages,pages_args_used))
     }
 }
+
+
+
+#' Retrieve the differential expression results for a given gene among datasets matching the provided query and filter
+#' 
+#' @param gene An ensembl gene identifier which typically starts with ensg or an ncbi gene identifier or an official gene symbol approved by hgnc
+#' @param query The search query. Queries can include plain text or ontology
+#' terms They also support conjunctions ("alpha AND beta"), disjunctions ("alpha OR beta")
+#' grouping ("(alpha OR beta) AND gamma"), prefixing ("alpha*"), wildcard characters
+#' ("BRCA?") and fuzzy matches ("alpha~").
+#' @param taxa A vector of taxon common names (e.g. human, mouse, rat). Providing multiple
+#' species will return results for all species. These are appended
+#' to the filter and equivalent to filtering for \code{taxon.commonName} property
+#' @param uris A vector of ontology term URIs. Providing multiple terms will
+#' return results containing any of the terms and their children. These are
+#' appended to the filter and equivalent to filtering for \code{allCharacteristics.valueUri}
+#' @param filter Filter results by matching expression. Use \code{\link{filter_properties}}
+#' function to get a list of all available parameters. These properties can be
+#' combined using "and" "or" clauses and may contain common operators such as "=", "<" or "in".
+#' (e.g. "taxon.commonName = human", "taxon.commonName in (human,mouse), "id < 1000")
+#' @param threshold number
+#' @param raw \code{TRUE} to receive results as-is from Gemma, or \code{FALSE} to enable
+#' parsing. Raw results usually contain additional fields and flags that are
+#' omitted in the parsed results.
+#' @param memoised Whether or not to save to cache for future calls with the
+#' same inputs and use the result saved in cache if a result is already saved.
+#' Doing \code{options(gemma.memoised = TRUE)} will ensure that the cache is always
+#' used. Use \code{\link{forget_gemma_memoised}} to clear the cache.
+#' @param file The name of a file to save the results to, or \code{NULL} to not write
+#' results to a file. If \code{raw == TRUE}, the output will be the raw endpoint from the
+#' API, likely a JSON or a gzip file. Otherwise, it will be a RDS file.
+#' @param overwrite Whether or not to overwrite if a file exists at the specified
+#' filename.
+#' 
+#' @examples
+#' # get all differential expression results for ENO2
+#' # from datasets marked with the ontology term for brain
+#' head(get_gene_differential_expression_values(2026, uris = "http://purl.obolibrary.org/obo/UBERON_0000955"))
+#' 
+#' @inherit processDifferentialExpressionAnalysisResultByGeneValueObject_tsv return
+#' @export
+get_gene_differential_expression_values <- function(gene,
+                                                    query = NA_character_,
+                                                    taxa = NA_character_,
+                                                    uris = NA_character_,
+                                                    filter = NA_character_,
+                                                    threshold = 1,
+                                                    raw = getOption("gemma.raw", FALSE),
+                                                    memoised = getOption("gemma.memoised", FALSE),
+                                                    file = getOption("gemma.file", NA_character_),
+                                                    overwrite = getOption("gemma.overwrite", FALSE)){
+    if(length(taxa) == 1 && !is.na(taxa)){
+        .get_gene_differential_expression_values_in_taxon(gene = gene,
+                                                          query = query,
+                                                          taxon = taxa,
+                                                          uris = uris,
+                                                          filter = filter,
+                                                          threshold = threshold,
+                                                          raw = raw,
+                                                          memoised = memoised,
+                                                          file = file,
+                                                          overwrite = overwrite)
+    } else {
+        .get_gene_differential_expression_values(gene = gene,
+                                                 query = query,
+                                                 taxa = taxa,
+                                                 uris = uris,
+                                                 filter = filter,
+                                                 threshold = threshold,
+                                                 raw = raw,
+                                                 memoised = memoised,
+                                                 file = file,
+                                                 overwrite = overwrite)
+    }
+    
+    
+}

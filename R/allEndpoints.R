@@ -135,13 +135,14 @@ mem.getResultSets <- function(resultSet = NA_character_, raw = getOption(
 #' get_result_sets(dataset = 1)
 #' # get all contrasts comparing disease states. use filter_properties to see avaialble options
 #' get_result_sets(filter = "baselineGroup.characteristics.value = disease")
-get_result_sets <- function(datasets = NA_character_, resultSets = NA_character_,
-    filter = NA_character_, offset = 0, limit = 20, sort = "+id",
-    raw = getOption("gemma.raw", FALSE), memoised = getOption(
-        "gemma.memoised",
-        FALSE
-    ), file = getOption("gemma.file", NA_character_),
-    overwrite = getOption("gemma.overwrite", FALSE)) {
+get_result_sets <- function(
+        datasets = NA_character_, resultSets = NA_character_,
+        filter = NA_character_, offset = 0, limit = 20, sort = "+id",
+        raw = getOption("gemma.raw", FALSE), memoised = getOption(
+            "gemma.memoised",
+            FALSE
+        ), file = getOption("gemma.file", NA_character_),
+        overwrite = getOption("gemma.overwrite", FALSE)) {
     compressibles <- "filter"
     open_api_name <- "get_result_sets"
     internal <- FALSE
@@ -608,12 +609,13 @@ memget_dataset_differential_expression_analyses <- function(dataset, raw = getOp
 #'
 #' @examples
 #' get_dataset_expression_for_genes("GSE2018", genes = c(10225, 2841))
-get_dataset_expression_for_genes <- function(datasets, genes, keepNonSpecific = FALSE, consolidate = NA_character_,
-    raw = getOption("gemma.raw", FALSE), memoised = getOption(
-        "gemma.memoised",
-        FALSE
-    ), file = getOption("gemma.file", NA_character_),
-    overwrite = getOption("gemma.overwrite", FALSE)) {
+get_dataset_expression_for_genes <- function(
+        datasets, genes, keepNonSpecific = FALSE, consolidate = NA_character_,
+        raw = getOption("gemma.raw", FALSE), memoised = getOption(
+            "gemma.memoised",
+            FALSE
+        ), file = getOption("gemma.file", NA_character_),
+        overwrite = getOption("gemma.overwrite", FALSE)) {
     compressibles <- NULL
     open_api_name <- "get_datasets_expression_levels_for_genes"
     internal <- FALSE
@@ -1219,13 +1221,14 @@ memget_dataset_samples <- function(dataset, raw = getOption("gemma.raw", FALSE),
 #' # filter below is equivalent to the call above
 #' get_datasets(filter = "taxon.commonName in (mouse,human) and allCharacteristics.valueUri = http://purl.obolibrary.org/obo/UBERON_0002048")
 #' get_datasets(query = "lung")
-get_datasets <- function(query = NA_character_, filter = NA_character_, taxa = NA_character_,
-    uris = NA_character_, offset = 0L, limit = 20L, sort = "+id",
-    raw = getOption("gemma.raw", FALSE), memoised = getOption(
-        "gemma.memoised",
-        FALSE
-    ), file = getOption("gemma.file", NA_character_),
-    overwrite = getOption("gemma.overwrite", FALSE)) {
+get_datasets <- function(
+        query = NA_character_, filter = NA_character_, taxa = NA_character_,
+        uris = NA_character_, offset = 0L, limit = 20L, sort = "+id",
+        raw = getOption("gemma.raw", FALSE), memoised = getOption(
+            "gemma.memoised",
+            FALSE
+        ), file = getOption("gemma.file", NA_character_),
+        overwrite = getOption("gemma.overwrite", FALSE)) {
     compressibles <- "filter"
     open_api_name <- "get_datasets"
     internal <- FALSE
@@ -1333,13 +1336,14 @@ memget_datasets <- function(
 #' @examples
 #' get_datasets_by_ids("GSE2018")
 #' get_datasets_by_ids(c("GSE2018", "GSE2872"))
-get_datasets_by_ids <- function(datasets = NA_character_, filter = NA_character_, taxa = NA_character_,
-    uris = NA_character_, offset = 0L, limit = 20L, sort = "+id",
-    raw = getOption("gemma.raw", FALSE), memoised = getOption(
-        "gemma.memoised",
-        FALSE
-    ), file = getOption("gemma.file", NA_character_),
-    overwrite = getOption("gemma.overwrite", FALSE)) {
+get_datasets_by_ids <- function(
+        datasets = NA_character_, filter = NA_character_, taxa = NA_character_,
+        uris = NA_character_, offset = 0L, limit = 20L, sort = "+id",
+        raw = getOption("gemma.raw", FALSE), memoised = getOption(
+            "gemma.memoised",
+            FALSE
+        ), file = getOption("gemma.file", NA_character_),
+        overwrite = getOption("gemma.overwrite", FALSE)) {
     compressibles <- "filter"
     open_api_name <- "get_datasets_by_ids"
     internal <- FALSE
@@ -1437,28 +1441,27 @@ memget_datasets_by_ids <- function(
 #' filename.
 #'
 #' @inherit processDifferentialExpressionAnalysisResultByGeneValueObject_tsv return
-#' @export
-#'
-#' @keywords gene
+#' @keywords internal
 #'
 #' @examples
 #' # get all differential expression results for ENO2
 #' # from datasets marked with the ontology term for brain
 #' head(get_gene_differential_expression_values(2026, uris = "http://purl.obolibrary.org/obo/UBERON_0000955"))
-get_gene_differential_expression_values <- function(gene, query = NA_character_, taxa = NA_character_,
-    uris = NA_character_, filter = NA_character_, threshold = 1,
-    raw = getOption("gemma.raw", FALSE), memoised = getOption(
-        "gemma.memoised",
-        FALSE
-    ), file = getOption("gemma.file", NA_character_),
-    overwrite = getOption("gemma.overwrite", FALSE)) {
+.get_gene_differential_expression_values <- function(
+        gene, query = NA_character_, taxa = NA_character_,
+        uris = NA_character_, filter = NA_character_, threshold = 1,
+        raw = getOption("gemma.raw", FALSE), memoised = getOption(
+            "gemma.memoised",
+            FALSE
+        ), file = getOption("gemma.file", NA_character_),
+        overwrite = getOption("gemma.overwrite", FALSE)) {
     compressibles <- "filter"
     open_api_name <- "get_datasets_differential_expression_analysis_results_for_gene"
-    internal <- FALSE
+    internal <- TRUE
     keyword <- "gene"
     header <- "text/tab-separated-values"
     isFile <- TRUE
-    fname <- "get_gene_differential_expression_values"
+    fname <- ".get_gene_differential_expression_values"
     preprocessor <- processDifferentialExpressionAnalysisResultByGeneValueObject_tsv
     validators <- list(
         gene = validateSingleID, query = validateOptionalQuery,
@@ -1471,13 +1474,13 @@ get_gene_differential_expression_values <- function(gene, query = NA_character_,
         }
         if ("character" %in% class(gemmaCache()) && gemmaCache() ==
             "cache_in_memory") {
-            return(mem_in_memory_cache("get_gene_differential_expression_values",
+            return(mem_in_memory_cache(".get_gene_differential_expression_values",
                 gene = gene, query = query, taxa = taxa, uris = uris,
                 filter = filter, threshold = threshold, raw = raw,
                 memoised = FALSE, file = file, overwrite = overwrite
             ))
         } else {
-            out <- memget_gene_differential_expression_values(
+            out <- mem.get_gene_differential_expression_values(
                 gene = gene,
                 query = query, taxa = taxa, uris = uris, filter = filter,
                 threshold = threshold, raw = raw, memoised = FALSE,
@@ -1494,21 +1497,128 @@ get_gene_differential_expression_values <- function(gene, query = NA_character_,
     )
 }
 
-#' Memoise get_gene_differential_expression_values
+#' Memoise .get_gene_differential_expression_values
 #'
 #' @noRd
-memget_gene_differential_expression_values <- function(gene, query = NA_character_, taxa = NA_character_,
-    uris = NA_character_, filter = NA_character_, threshold = 1,
-    raw = getOption("gemma.raw", FALSE), memoised = getOption(
-        "gemma.memoised",
-        FALSE
-    ), file = getOption("gemma.file", NA_character_),
-    overwrite = getOption("gemma.overwrite", FALSE)) {
-    mem_call <- memoise::memoise(get_gene_differential_expression_values,
+mem.get_gene_differential_expression_values <- function(
+        gene, query = NA_character_, taxa = NA_character_,
+        uris = NA_character_, filter = NA_character_, threshold = 1,
+        raw = getOption("gemma.raw", FALSE), memoised = getOption(
+            "gemma.memoised",
+            FALSE
+        ), file = getOption("gemma.file", NA_character_),
+        overwrite = getOption("gemma.overwrite", FALSE)) {
+    mem_call <- memoise::memoise(.get_gene_differential_expression_values,
         cache = gemmaCache()
     )
     mem_call(
         gene = gene, query = query, taxa = taxa, uris = uris,
+        filter = filter, threshold = threshold, raw = raw, memoised = FALSE,
+        file = file, overwrite = overwrite
+    )
+}
+
+#' Retrieve the differential expression results for a given gene and taxa among datasets matching the provided query and filter
+#'
+#'
+#'
+#' @param gene An ensembl gene identifier which typically starts with ensg or an ncbi gene identifier or an official gene symbol approved by hgnc
+#' @param query The search query. Queries can include plain text or ontology
+#' terms They also support conjunctions ("alpha AND beta"), disjunctions ("alpha OR beta")
+#' grouping ("(alpha OR beta) AND gamma"), prefixing ("alpha*"), wildcard characters
+#' ("BRCA?") and fuzzy matches ("alpha~").
+#' @param taxon A numerical taxon identifier or an ncbi taxon identifier or a taxon identifier that matches either its scientific or common name
+#' @param uris A vector of ontology term URIs. Providing multiple terms will
+#' return results containing any of the terms and their children. These are
+#' appended to the filter and equivalent to filtering for \code{allCharacteristics.valueUri}
+#' @param filter Filter results by matching expression. Use \code{\link{filter_properties}}
+#' function to get a list of all available parameters. These properties can be
+#' combined using "and" "or" clauses and may contain common operators such as "=", "<" or "in".
+#' (e.g. "taxon.commonName = human", "taxon.commonName in (human,mouse), "id < 1000")
+#' @param threshold number
+#' @param raw \code{TRUE} to receive results as-is from Gemma, or \code{FALSE} to enable
+#' parsing. Raw results usually contain additional fields and flags that are
+#' omitted in the parsed results.
+#' @param memoised Whether or not to save to cache for future calls with the
+#' same inputs and use the result saved in cache if a result is already saved.
+#' Doing \code{options(gemma.memoised = TRUE)} will ensure that the cache is always
+#' used. Use \code{\link{forget_gemma_memoised}} to clear the cache.
+#' @param file The name of a file to save the results to, or \code{NULL} to not write
+#' results to a file. If \code{raw == TRUE}, the output will be the raw endpoint from the
+#' API, likely a JSON or a gzip file. Otherwise, it will be a RDS file.
+#' @param overwrite Whether or not to overwrite if a file exists at the specified
+#' filename.
+#'
+#' @return Varies
+#' @keywords internal
+#'
+#' @examples
+.get_gene_differential_expression_values_in_taxon <- function(
+        gene, query = NA_character_, taxon = NA_character_,
+        uris = NA_character_, filter = NA_character_, threshold = 1,
+        raw = getOption("gemma.raw", FALSE), memoised = getOption(
+            "gemma.memoised",
+            FALSE
+        ), file = getOption("gemma.file", NA_character_),
+        overwrite = getOption("gemma.overwrite", FALSE)) {
+    compressibles <- "filter"
+    open_api_name <- "get_datasets_differential_expression_analysis_results_for_gene_in_taxon"
+    internal <- TRUE
+    keyword <- "gene"
+    header <- "text/tab-separated-values"
+    isFile <- TRUE
+    fname <- ".get_gene_differential_expression_values_in_taxon"
+    preprocessor <- processDifferentialExpressionAnalysisResultByGeneValueObject_tsv
+    validators <- list(
+        gene = validateSingleID, query = validateOptionalQuery,
+        filter = validateFilter, taxon = validateTaxon, threshold = validateNumber
+    )
+    endpoint <- "datasets/analyses/differential/results/taxa/{encode(taxon)}/genes/{encode(gene)}?&query={encode(query)}&filter={encode(filter)}&threshold={encode(threshold)}"
+    if (memoised) {
+        if (!is.na(file)) {
+            warning("Saving to files is not supported with memoisation.")
+        }
+        if ("character" %in% class(gemmaCache()) && gemmaCache() ==
+            "cache_in_memory") {
+            return(mem_in_memory_cache(".get_gene_differential_expression_values_in_taxon",
+                gene = gene, query = query, taxon = taxon, uris = uris,
+                filter = filter, threshold = threshold, raw = raw,
+                memoised = FALSE, file = file, overwrite = overwrite
+            ))
+        } else {
+            out <- mem.get_gene_differential_expression_values_in_taxon(
+                gene = gene,
+                query = query, taxon = taxon, uris = uris, filter = filter,
+                threshold = threshold, raw = raw, memoised = FALSE,
+                file = file, overwrite = overwrite
+            )
+            return(out)
+        }
+    }
+    .body(
+        fname = fname, validators = validators, endpoint = endpoint,
+        envWhere = environment(), isFile = isFile, header = header,
+        raw = raw, overwrite = overwrite, file = file, attributes = TRUE,
+        open_api_name = open_api_name, .call = match.call()
+    )
+}
+
+#' Memoise .get_gene_differential_expression_values_in_taxon
+#'
+#' @noRd
+mem.get_gene_differential_expression_values_in_taxon <- function(
+        gene, query = NA_character_, taxon = NA_character_,
+        uris = NA_character_, filter = NA_character_, threshold = 1,
+        raw = getOption("gemma.raw", FALSE), memoised = getOption(
+            "gemma.memoised",
+            FALSE
+        ), file = getOption("gemma.file", NA_character_),
+        overwrite = getOption("gemma.overwrite", FALSE)) {
+    mem_call <- memoise::memoise(.get_gene_differential_expression_values_in_taxon,
+        cache = gemmaCache()
+    )
+    mem_call(
+        gene = gene, query = query, taxon = taxon, uris = uris,
         filter = filter, threshold = threshold, raw = raw, memoised = FALSE,
         file = file, overwrite = overwrite
     )
@@ -2118,13 +2228,14 @@ memget_platform_element_genes <- function(platform, probe, offset = 0L, limit = 
 #' @examples
 #' get_platforms_by_ids("GPL1355")
 #' get_platforms_by_ids(c("GPL1355", "GPL96"))
-get_platforms_by_ids <- function(platforms = NA_character_, filter = NA_character_,
-    taxa = NA_character_, offset = 0L, limit = 20L, sort = "+id",
-    raw = getOption("gemma.raw", FALSE), memoised = getOption(
-        "gemma.memoised",
-        FALSE
-    ), file = getOption("gemma.file", NA_character_),
-    overwrite = getOption("gemma.overwrite", FALSE)) {
+get_platforms_by_ids <- function(
+        platforms = NA_character_, filter = NA_character_,
+        taxa = NA_character_, offset = 0L, limit = 20L, sort = "+id",
+        raw = getOption("gemma.raw", FALSE), memoised = getOption(
+            "gemma.memoised",
+            FALSE
+        ), file = getOption("gemma.file", NA_character_),
+        overwrite = getOption("gemma.overwrite", FALSE)) {
     compressibles <- "filter"
     open_api_name <- "get_platforms_by_ids"
     internal <- FALSE
@@ -2223,15 +2334,16 @@ memget_platforms_by_ids <- function(
 #'
 #' @examples
 #' search_gemma("bipolar")
-search_gemma <- function(query, taxon = NA_character_, platform = NA_character_,
-    limit = 100, resultType = "experiment", raw = getOption(
-        "gemma.raw",
-        FALSE
-    ), memoised = getOption("gemma.memoised", FALSE),
-    file = getOption("gemma.file", NA_character_), overwrite = getOption(
-        "gemma.overwrite",
-        FALSE
-    )) {
+search_gemma <- function(
+        query, taxon = NA_character_, platform = NA_character_,
+        limit = 100, resultType = "experiment", raw = getOption(
+            "gemma.raw",
+            FALSE
+        ), memoised = getOption("gemma.memoised", FALSE),
+        file = getOption("gemma.file", NA_character_), overwrite = getOption(
+            "gemma.overwrite",
+            FALSE
+        )) {
     compressibles <- NULL
     open_api_name <- "search"
     internal <- FALSE

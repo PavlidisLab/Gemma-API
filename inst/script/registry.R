@@ -564,7 +564,7 @@ registerEndpoint("datasets/{datasets}?&offset={offset}&limit={limit}&sort={sort}
 
 # /datasets/analyses/differential/results/genes/{gene} -----------
 
-#' get_gene_differential_expression_values
+#' .get_gene_differential_expression_values
 #' 
 #' @inherit processDifferentialExpressionAnalysisResultByGeneValueObject_tsv return
 #' 
@@ -601,11 +601,12 @@ NULL
 
 
 registerEndpoint("datasets/analyses/differential/results/genes/{gene}?&query={query}&filter={filter}&threshold={threshold}",
-                 "get_gene_differential_expression_values",
+                 ".get_gene_differential_expression_values",
                  open_api_name = "get_datasets_differential_expression_analysis_results_for_gene",
                  keyword = 'gene',
                  header = "text/tab-separated-values",
                  isFile = TRUE,
+                 internal = TRUE,
                  defaults = list(
                      gene = bquote(),
                      query = NA_character_,
@@ -625,8 +626,38 @@ registerEndpoint("datasets/analyses/differential/results/genes/{gene}?&query={qu
 )
 
 
-# /datasets/analyses/differential/results/taxa/{taxon}/genes/gene ----
+# /datasets/analyses/differential/results/taxa/{taxon}/genes/{gene} ----
 # unimplemented along with other taxon specific endpoints
+
+registerEndpoint("datasets/analyses/differential/results/taxa/{taxon}/genes/{gene}?&query={query}&filter={filter}&threshold={threshold}",
+                 ".get_gene_differential_expression_values_in_taxon",
+                 open_api_name = "get_datasets_differential_expression_analysis_results_for_gene_in_taxon",
+                 keyword = 'gene',
+                 header = "text/tab-separated-values",
+                 isFile = TRUE,
+                 internal = TRUE,
+                 defaults = list(
+                     gene = bquote(),
+                     query = NA_character_,
+                     taxon = NA_character_,
+                     uris = NA_character_,
+                     filter = NA_character_,
+                     threshold = 1
+                 ),
+                 compressibles = c('filter'),
+                 validators = alist(
+                     gene = validateSingleID,
+                     query = validateOptionalQuery,
+                     filter = validateFilter,
+                     taxon = validateTaxon,
+                     threshold = validateNumber
+                 ),
+                 preprocessor = quote(processDifferentialExpressionAnalysisResultByGeneValueObject_tsv)
+)
+
+
+
+
 
 # /datasets/expressions/genes/{gene} -------
 # not in prod yet
